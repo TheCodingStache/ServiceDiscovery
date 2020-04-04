@@ -1,25 +1,45 @@
 import org.apache.log4j.Logger;
-import org.apache.log4j.lf5.viewer.LogTable;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
-import sun.rmi.runtime.Log;
+import org.apache.zookeeper.*;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class ElectionLeader implements Watcher {
     private static final String ZOOKEEPER_ADDRESS = "localhost:2181";
     private static final int SESSION_TIMEOUT = 3000;
+    private static final String ELECTION_NAMESPACE = "/election";
     private ZooKeeper zooKeeper;
     private static Logger logger;
+    private String currentZnodeName;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, KeeperException {
         logger = Logger.getLogger(ElectionLeader.class);
         ElectionLeader electionLeader = new ElectionLeader();
         electionLeader.connectToZookeeper();
+        electionLeader.volunteerForLeaderShip();
+        electionLeader.electLeader();
         electionLeader.run();
         electionLeader.close();
         System.out.println("Disconnected from Zookeeper, exiting application");
+    }
+
+    private void volunteerForLeaderShip() throws KeeperException, InterruptedException {
+        String zNodePrefix = ELECTION_NAMESPACE + "/c_";
+        String zNodeFullPath = zooKeeper.create(zNodePrefix, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+        System.out.println("znode name " + zNodeFullPath);
+        this.currentZnodeName = zNodeFullPath.replace(ELECTION_NAMESPACE + "/", "");
+    }
+
+    private void electLeader() throws KeeperException, InterruptedException {
+        List<String> children = zooKeeper.getChildren(ELECTION_NAMESPACE, false);
+        Collections.sort(children);
+        String smallestChild = children.get(0);
+        if (smallestChild.equals(currentZnodeName)) {
+            System.out.println("I am the leader");
+        } else {
+            System.out.println("I am not the leader" + smallestChild + "is the leader");
+        }
     }
 
     private void connectToZookeeper() throws IOException {
