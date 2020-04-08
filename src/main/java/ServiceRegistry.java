@@ -56,9 +56,7 @@ public class ServiceRegistry implements Watcher {
     public void process(WatchedEvent watchedEvent) {
         try {
             updateAddresses();
-        } catch (KeeperException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (KeeperException | InterruptedException e) {
             e.printStackTrace();
         }
 
