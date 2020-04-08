@@ -1,6 +1,9 @@
 import com.sun.org.apache.regexp.internal.RE;
 import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ServiceRegistry implements Watcher {
@@ -32,8 +35,32 @@ public class ServiceRegistry implements Watcher {
         }
     }
 
+    private synchronized void updateAddresses() throws KeeperException, InterruptedException {
+        List<String> workerZnodes = zooKeeper.getChildren(REGISTRY_ZNODE, this);
+        List<String> addresses = new ArrayList<>(workerZnodes.size());
+        for (String workerZnode : workerZnodes) {
+            String zNodeFullPath = REGISTRY_ZNODE + "/" + workerZnode;
+            Stat stat = zooKeeper.exists(zNodeFullPath, false);
+            if (stat == null) {
+                continue;
+            }
+            byte[] addressBytes = zooKeeper.getData(zNodeFullPath, false, stat);
+            String address = new String(addressBytes);
+            addresses.add(address);
+        }
+        this.allServicesAddresses = Collections.unmodifiableList(addresses);
+        System.out.println("This cluster addresses are " + this.allServicesAddresses);
+    }
+
     @Override
     public void process(WatchedEvent watchedEvent) {
+        try {
+            updateAddresses();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
