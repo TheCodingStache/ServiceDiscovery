@@ -17,7 +17,7 @@ public class ServiceRegistry implements Watcher {
         createServiceRegistryZnode();
     }
 
-    private void registerForUpdates() {
+    public void registerForUpdates() {
         try {
             updateAddresses();
         } catch (KeeperException | InterruptedException e) {
@@ -36,7 +36,7 @@ public class ServiceRegistry implements Watcher {
         return allServicesAddresses;
     }
 
-    private void registerToCluster(String metadata) throws KeeperException, InterruptedException {
+    public void registerToCluster(String metadata) throws KeeperException, InterruptedException {
         this.currentZnode = zooKeeper.create(REGISTRY_ZNODE + "\n "
                 , metadata.getBytes()
                 , ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
