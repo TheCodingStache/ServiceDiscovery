@@ -54,6 +54,12 @@ public class ServiceRegistry implements Watcher {
         }
     }
 
+    public void unregisterFromTheCluster() throws KeeperException, InterruptedException {
+        if (currentZnode != null && zooKeeper.exists(currentZnode, false) != null) {
+            zooKeeper.delete(currentZnode, -1);
+        }
+    }
+
     private synchronized void updateAddresses() throws KeeperException, InterruptedException {
         List<String> workerZnodes = zooKeeper.getChildren(REGISTRY_ZNODE, this);
         List<String> addresses = new ArrayList<>(workerZnodes.size());
