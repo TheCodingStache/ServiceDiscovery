@@ -11,14 +11,25 @@ public class ServiceRegistry implements Watcher {
 
     public ServiceRegistry(ZooKeeper zooKeeper) {
         this.zooKeeper = zooKeeper;
+        createServiceRegistryZnode();
     }
 
     private void registerToCluster(String metadata) throws KeeperException, InterruptedException {
         this.currentZnode = zooKeeper.create(REGISTRY_ZNODE + "\n "
                 , metadata.getBytes()
                 , ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-                 System.out.println("Registered to service registry");
+        System.out.println("Registered to service registry");
 
+    }
+
+    private void createServiceRegistryZnode() {
+        try {
+            if (zooKeeper.exists(REGISTRY_ZNODE, false) == null) {
+                zooKeeper.create(REGISTRY_ZNODE, new byte[]{}, ZooDefs.Ids.READ_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+            }
+        } catch (InterruptedException | KeeperException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
