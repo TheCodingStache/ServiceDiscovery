@@ -1,3 +1,5 @@
+import Cluster.OnElectionCallback;
+import Cluster.ServiceRegistry;
 import org.apache.zookeeper.KeeperException;
 
 import java.net.InetAddress;

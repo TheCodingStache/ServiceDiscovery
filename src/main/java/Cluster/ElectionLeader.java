@@ -1,3 +1,5 @@
+package Cluster;
+
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import java.util.Collections;
@@ -64,7 +66,5 @@ public class ElectionLeader implements Watcher {
                     e.printStackTrace();
                 }
         }
-
-
     }
 }

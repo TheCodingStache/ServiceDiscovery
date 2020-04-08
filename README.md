@@ -1,4 +1,4 @@
-# ElectionLeader
+# Cluster.ElectionLeader
 
 This project demonstrates how to use zookeeper libraries threading model.
 Zookeeper client creates two additional threads in my application the I/O thread which handles the connection between the app

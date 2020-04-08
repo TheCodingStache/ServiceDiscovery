@@ -1,3 +1,5 @@
+package Cluster;
+
 public interface OnElectionCallback {
     void onElectedLeader();
 

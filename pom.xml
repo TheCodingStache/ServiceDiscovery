@@ -35,7 +35,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                ElectionLeader
+                                Cluster.ElectionLeader
                             </mainClass>
                         </manifest>
                     </archive>
