@@ -1,4 +1,4 @@
-# Service Discvovery & Service Registry based on Leader Election Algorithm
+# Service Discovery & Service Registry based on Leader Election Algorithm
 
 This project demonstrates how to use zookeeper libraries threading model.
 Zookeeper client creates two additional threads in my application the I/O thread which handles the connection between the app
